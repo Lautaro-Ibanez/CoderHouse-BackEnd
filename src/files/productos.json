@@ -1,0 +1,29 @@
+[
+ {
+  "title": "hola",
+  "price": 5,
+  "description": "soy",
+  "thumbnail": "producto",
+  "code": 130,
+  "stock": 20,
+  "id": 1
+ },
+ {
+  "title": "hola",
+  "price": 7,
+  "description": "soy",
+  "thumbnail": "producto",
+  "code": 300,
+  "stock": 58,
+  "id": 2
+ },
+ {
+  "title": "hola",
+  "price": 2500,
+  "description": "soy",
+  "thumbnail": "producto",
+  "code": 436,
+  "stock": 8,
+  "id": 3
+ }
+]

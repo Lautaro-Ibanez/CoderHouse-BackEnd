@@ -1,4 +1,3 @@
-import { promises } from "dns";
 import fs, { existsSync } from "fs";
 
 export default class ProductManager {
