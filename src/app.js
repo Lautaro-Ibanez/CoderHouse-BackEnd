@@ -20,6 +20,7 @@ app.get("/products", (req, res) => {
 
 app.get("/products/:pid", (req, res) => {
   productos.getProducts().then(resultado => {
+    console.log(resultado)
     const productos = resultado;
     const producto = productos.find(u=> u.id === parseInt(req.params.pid))
     res.send(producto)

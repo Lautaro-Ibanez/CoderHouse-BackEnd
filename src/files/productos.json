@@ -25,5 +25,14 @@
   "code": 436,
   "stock": 8,
   "id": 3
+ },
+ {
+  "title": "hola",
+  "price": 250,
+  "description": "soy",
+  "thumbnail": "imagen",
+  "code": "abc123",
+  "stock": 40,
+  "id": 4
  }
 ]
