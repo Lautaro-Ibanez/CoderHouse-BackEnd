@@ -15,7 +15,15 @@ export default class ProductManager {
     }
   };
 
-  addProduct = async (title, price, description, thumbnail, code, stock) => {
+  addProduct = async (
+    title,
+    price,
+    description,
+    thumbnail,
+    code,
+    stock,
+    category
+  ) => {
     const productos = await this.getProducts();
 
     const addProduct = {
@@ -25,6 +33,8 @@ export default class ProductManager {
       thumbnail: thumbnail,
       code: code,
       stock: stock,
+      status: true,
+      category: category,
     };
 
     if (productos.length === 0) {
@@ -61,19 +71,31 @@ export default class ProductManager {
     }
   };
 
-  updateProduct = async (id, campo, valor) => {
-    if (campo == id) {
-      console.log("no se puede cambiar el ID");
-      return;
-    }
+  updateProduct = async (id, objeto) => {
     const productos = await this.getProducts();
     const update = await this.getProductsById(id);
-    update[campo] = valor;
+    const objectKeys = Object.keys(objeto);
+
+    for (let i = 0; i < objectKeys.length; i++) {
+      if (objectKeys[i] == "id") {
+        return "Error, no se puede cambiar el id de un producto";
+      }
+    }
+
+    for (let elem in update) {
+      for (let prop in objeto) {
+        if ((elem = prop)) {
+          update[elem] = objeto[prop];
+        }
+      }
+    }
+
     for (let i = 0; i < productos.length; i++) {
       if (productos[i].id == update.id) {
         productos[i] = update;
       }
     }
+
     await fs.promises.writeFile(
       this.path,
       JSON.stringify(productos, null, " ")
