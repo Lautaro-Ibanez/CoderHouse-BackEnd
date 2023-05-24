@@ -1,8 +1,9 @@
+import __dirname from "../../../util.js";
 import fs, { existsSync } from "fs";
 
 export default class CartManager {
   constructor() {
-    this.path = "./src/files/cart.json";
+    this.path = `${__dirname}/files/cart.json`;
   }
 
   getCarts = async () => {

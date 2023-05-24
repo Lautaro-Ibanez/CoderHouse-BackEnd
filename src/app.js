@@ -1,51 +1,40 @@
-import express, { urlencoded } from "express";
-import productsRouter from "./routes/products-router.js";
-import cartRouter from "./routes/cart-router.js";
-import viewsRouter from "./routes/views-rounter.js";
+import express from "express";
 import handlebars from "express-handlebars";
-import __dirname from "./util.js";
+import mongoose from "mongoose";
 import { Server } from "socket.io";
-import ProductManager from "./productManager.js";
 
+import viewsRouter from "./routes/views-router.js";
+import productsRouter from "./routes/products-router.js";
+import cartRouter from "./routes/carts-router.js";
 
-const productos = new ProductManager();
+import registerChatHandler from "./listeners/chat-handler.js";
+import __dirname from "./util.js";
 
+/*--------------------------  Server  --------------------------*/
 const app = express();
+const PORT = process.env.PORT || 8080;
+const server = app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+const io = new Server(server);
+const urlAtlas =
+  "mongodb+srv://EntregaCoder:123@ecommerce.ipofbng.mongodb.net/ecommerce?retryWrites=true&w=majority";
+const connection = mongoose.connect(urlAtlas);
 
+/*--------------------------  middlewares  --------------------------*/
 app.use(express.json());
-app.use(urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
 
+/*--------------------------  routes  --------------------------*/
+app.use("/", viewsRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/carts", cartRouter);
+
+/*--------------------------  Handlebars  --------------------------*/
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
 
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartRouter);
-app.use("/", viewsRouter);
-const server = app.listen(8080, () => {
-  console.log("Listening in port 8080");
-});
-
-const io = new Server(server);
-
-const logs = [];
-
-
+/*--------------------------  WebSockets  --------------------------*/
 io.on("connection", (socket) => {
-  
-  productos.getProducts().then((res)=>{
-    io.emit('getProducts', res)
-  })
-
-  console.log("nuevo cliente conectado");
-  socket.on("message", (data) => {
-    logs.push({ id: socket.id, message: data });
-    console.log(logs);
-    io.emit("logs", logs);
-  });
-
-  
+  registerChatHandler(io, socket);
 });
-
-
