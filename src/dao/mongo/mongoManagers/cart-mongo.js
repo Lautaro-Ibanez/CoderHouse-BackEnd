@@ -6,7 +6,7 @@ export default class CartManager {
   };
 
   getCartsBy = (params) => {
-    return cartModel.findOne(params);
+    return cartModel.findOne(params).populate('products.productId');
   };
 
   addCart = (cart) => {
@@ -22,9 +22,9 @@ export default class CartManager {
   };
 
   cartUpdate = (cid, object) => {
-    return cartModel.findByIdAndUpdate(
-      cid,
-      { products: object },
+    return cartModel.findOneAndUpdate(
+      { _id: cid },
+      { $set: { products: object } },
       { new: true }
     );
   };

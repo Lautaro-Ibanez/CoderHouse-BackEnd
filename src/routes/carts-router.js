@@ -32,6 +32,7 @@ router.get("/:cid", async (req, res) => {
 
 router.post("/:cid/product/:pid", async (req, res) => {
   try {
+    const quantityUpdate = req.body;
     const cid = req.params.cid;
     const pid = req.params.pid;
 
@@ -94,14 +95,83 @@ router.delete("/:cid/product/:pid", async (req, res) => {
 router.put("/:cid", async (req, res) => {
   try {
     const { cid } = req.params;
-    const products = req.body;
-    const result = await carts.cartUpdate(cid, products);
-    res.status(201).send({ message: "Cart Updated" });
-  } catch {
-    res.status(404).send({ error: "Cart Not Found" });
+    const object = req.body;
+    const productsWithObjectId = object.products.map((product) => ({
+      productId: new mongoose.Types.ObjectId(product.productId),
+      quantity: product.quantity,
+    }));
+    const result = await carts.cartUpdate(cid, productsWithObjectId);
+    if (result) {
+      return res
+        .status(200)
+        .send({ status: "succes", message: "Cart Updated" });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ error: "Internal Server Error" });
   }
 });
 
-router.put("/carts");
+router.put("/:cid/product/:pid", async (req, res) => {
+  try {
+    const { cid, pid } = req.params;
+    const cantidad = req.body;
+    if (cantidad.quantity < 0) {
+      return res.status(400).send({ error: "incorrect values" });
+    }
+
+    /*-------------------- Me fijo si existe carrito ? --------------------*/
+    const cartResult = await carts.getCartsBy({ _id: cid });
+    if (!cartResult) {
+      return res.status(404).send({ error: "cart not found" });
+    }
+
+    /*-------------------- Me fijo si existe producto ? --------------------*/
+    const productResult = await productModel.findById({ _id: pid });
+    if (!productResult) {
+      return res.status(404).send({ error: "product not found" });
+    }
+
+    const result = await cartModel.findOneAndUpdate(
+      { _id: cid, "products.productId": pid },
+      { $set: { "products.$.quantity": cantidad.quantity } },
+      { new: true }
+    );
+    if (result) {
+      return res
+        .status(200)
+        .send({ status: "succes", message: "Product Quantity Updated" });
+    }
+  } catch {
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+
+router.delete("/:cid", async (req, res) => {
+  try {
+    const { cid } = req.params;
+
+    /*-------------------- Me fijo si existe carrito ? --------------------*/
+    const cartResult = await carts.getCartsBy({ _id: cid });
+    if (!cartResult) {
+      return res.status(404).send({ error: "cart not found" });
+    }
+
+    const deleteProducts = await cartModel.findOneAndUpdate(
+      { _id: cid },
+      { $unset: { products: 1 } }
+    );
+
+    if (deleteProducts) {
+      return res.status(200).send({
+        status: "succes",
+        message: "the products in the cart have been removed",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
 
 export default router;
