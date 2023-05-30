@@ -35,19 +35,45 @@ router.post("/:cid/product/:pid", async (req, res) => {
       return res.status(404).send({ error: "Cart Not Found" });
     }
 
-    const existingProduct = cart.products.find((product) => product.id === pid);
+    const existingProduct = cart.products.find(
+      (elem) => elem.productId === pid
+    );
     if (existingProduct) {
       existingProduct.quantity += 1;
       await cart.save();
       return res.send({ status: "succes", message: "Product Increment One" });
     } else {
-      cart.products.push({ id: pid, quantity: 1 });
+      cart.products.push({ productId: pid, quantity: 1 });
     }
     await cart.save();
     return res.send({ status: "succes", message: "Product Added To Cart" });
   } catch (err) {
-    return res.status(500).send({ error: "Error al añadir el producto" });
+    return res.status(500).send(err);
   }
 });
+
+router.delete("/:cid/product/:pid", async (req, res) => {
+  try {
+    const { cid } = req.params.cid;
+    const { pid } = req.params.pid;
+    await carts.deleteProductFromCart(cid, pid);
+    res.status(201).send({ message: "Product Updated" });
+  } catch (err) {
+    res.status(404).send({ error: "Product Not Found" });
+  }
+});
+
+router.put("/:cid", async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const products = req.body;
+    const result = await carts.cartUpdate(cid, products);
+    res.status(201).send({ message: "Cart Updated" });
+  } catch {
+    res.status(404).send({ error: "Cart Not Found" });
+  }
+});
+
+router.put("/carts")
 
 export default router;

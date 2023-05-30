@@ -6,13 +6,14 @@ const schema = new mongoose.Schema(
   {
     products: [
       {
-        _id:false,
-        id: String,
-        quantity: Number
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "products",
+        },
+        quantity: Number,
       },
     ],
   },
-  {autoCreate:false},
   { timestamps: { createdAt: "created_at", updatedAt: "update_at" } }
 );
 

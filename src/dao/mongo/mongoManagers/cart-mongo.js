@@ -13,4 +13,19 @@ export default class CartManager {
     return cartModel.create(cart);
   };
 
+  deleteProductFromCart = (cid, pid) => {
+    return cartModel.findOneAndUpdate(
+      { _id: cid },
+      { $pull: { products: { productId: pid } } },
+      { new: true }
+    );
+  };
+
+  cartUpdate = (cid, object) => {
+    return cartModel.findByIdAndUpdate(
+      cid,
+      { products: object },
+      { new: true }
+    );
+  };
 }
