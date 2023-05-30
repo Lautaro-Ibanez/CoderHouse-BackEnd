@@ -32,7 +32,6 @@ router.get("/:cid", async (req, res) => {
 
 router.post("/:cid/product/:pid", async (req, res) => {
   try {
-    const quantityUpdate = req.body;
     const cid = req.params.cid;
     const pid = req.params.pid;
 

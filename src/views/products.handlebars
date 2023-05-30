@@ -1,0 +1,40 @@
+<h1>Paginate Products</h1>
+
+{{#each products}}
+<form id="form">
+    <p> {{this.title}}</p>
+    <p>{{this.price}}</p>
+    <p id="idProduct">{{this.id}}</p>
+    <button id="addCart">add to Cart</button>
+</form>
+<br>
+<br>
+{{/each}}
+
+{{#if hasPrevPage}}
+<a href="/products/?page={{prevPage}}"><button>anterior</button></a>
+{{/if}}
+
+{{page}}
+
+
+{{#if hasNextPage}}
+<a href="/products/?page={{nextPage}}"><button>siguiente</button></a>
+{{/if}}
+
+<script>
+    const addToCart = document.getElementById('addCart');
+    const idProduct = document.getElementById("idProduct");
+    const form = document.getElementById('form')
+    console.log(idProduct.innerHTML);
+    addToCart.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        fetch(`http://localhost:8080/api/carts/647632af04517d3f0bdf5d10/product/${idProduct.innerHTML}`, {
+            method: 'POST'
+        })
+            .then((res) => res.json())
+            .then((data) => console.log(data))
+
+    });
+
+</script>
