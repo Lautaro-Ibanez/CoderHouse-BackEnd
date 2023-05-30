@@ -1,5 +1,8 @@
 import { Router } from "express";
 import CartManager from "../dao/mongo/mongoManagers/cart-mongo.js";
+import cartModel from "../dao/mongo/models/cart-model.js";
+import productModel from "../dao/mongo/models/product-model.js";
+import mongoose from "mongoose";
 
 const router = Router();
 const carts = new CartManager();
@@ -28,38 +31,63 @@ router.get("/:cid", async (req, res) => {
 });
 
 router.post("/:cid/product/:pid", async (req, res) => {
-  const { cid, pid } = req.params;
   try {
-    const cart = await carts.getCartsBy({ _id: cid });
-    if (!cart) {
-      return res.status(404).send({ error: "Cart Not Found" });
+    const cid = req.params.cid;
+    const pid = req.params.pid;
+
+    /*-------------------- Me fijo si existe carrito ? --------------------*/
+    const cartResult = await carts.getCartsBy({ _id: cid });
+    if (!cartResult) {
+      return res.status(404).send({ error: "cart not found" });
     }
 
-    const existingProduct = cart.products.find(
-      (elem) => elem.productId === pid
-    );
-    if (existingProduct) {
-      existingProduct.quantity += 1;
-      await cart.save();
-      return res.send({ status: "succes", message: "Product Increment One" });
-    } else {
-      cart.products.push({ productId: pid, quantity: 1 });
+    /*-------------------- Me fijo si existe producto ? --------------------*/
+    const productResult = await productModel.findById({ _id: pid });
+    if (!productResult) {
+      return res.status(404).send({ error: "product not found" });
     }
-    await cart.save();
-    return res.send({ status: "succes", message: "Product Added To Cart" });
+
+    /*--------------------  primera consulta : agregar el producto si no existe  -------------------- */
+    const cartUpdated = await cartModel.findOneAndUpdate(
+      { _id: cid, "products.productId": { $ne: pid } },
+      { $addToSet: { products: { productId: pid, quantity: 1 } } },
+      { new: true }
+    );
+
+    if (cartUpdated) {
+      return res.send({ status: "Succes", message: "Product Added To Cart" });
+    }
+
+    /*--------------------  segunda consulta : incrementar quantity en 1 si ya existe el producto  -------------------- */
+    const cartUpdated2 = await cartModel.findOneAndUpdate(
+      { _id: cid, "products.productId": pid },
+      { $inc: { "products.$.quantity": 1 } },
+      { new: true }
+    );
+
+    if (cartUpdated2) {
+      return res.send({ status: "Succes", message: "Product increment one" });
+    }
+
+    res.status(500).send({ error: "could not update cart" });
   } catch (err) {
-    return res.status(500).send(err);
+    console.log("Error al manejar la solicitud:", err);
+    res.status(500).send({ error: "Internal Server Error" });
   }
 });
 
 router.delete("/:cid/product/:pid", async (req, res) => {
+  const cid = req.params.cid;
+  const pid = req.params.pid;
   try {
-    const { cid } = req.params.cid;
-    const { pid } = req.params.pid;
-    await carts.deleteProductFromCart(cid, pid);
-    res.status(201).send({ message: "Product Updated" });
-  } catch (err) {
-    res.status(404).send({ error: "Product Not Found" });
+    await cartModel.findOneAndUpdate(
+      { _id: cid },
+      { $pull: { products: { productId: pid } } },
+      { new: true }
+    );
+    res.send({ status: "succes", message: "Product Deleted" });
+  } catch {
+    res.status(404).send({ status: "error", error: "error deleting product" });
   }
 });
 
@@ -74,6 +102,6 @@ router.put("/:cid", async (req, res) => {
   }
 });
 
-router.put("/carts")
+router.put("/carts");
 
 export default router;
