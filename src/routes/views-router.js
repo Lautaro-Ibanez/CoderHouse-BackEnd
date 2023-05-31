@@ -14,6 +14,7 @@ router.get("/products", async (req, res) => {
     await productModel.paginate({}, { page, limit: 3, lean: true });
   const products = docs;
   res.render("products", {
+    css: "products",
     products,
     hasPrevPage,
     hasNextPage,
@@ -25,8 +26,11 @@ router.get("/products", async (req, res) => {
 
 router.get("/carts/:cid", async (req, res) => {
   const { cid } = req.params;
-  const result = await cartModel.findById({ _id: cid }).populate('products.productId').lean();
-  res.render("carts",{cart:result});
+  const result = await cartModel
+    .findById({ _id: cid })
+    .populate("products.productId")
+    .lean();
+  res.render("carts", { cart: result, css: "cart" });
 });
 
 export default router;
