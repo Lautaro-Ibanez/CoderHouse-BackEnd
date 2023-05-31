@@ -1,0 +1,7 @@
+<div id="cart" dataCartId="{{cart._id}}">
+    {{#each cart.products}}
+    <div>{{this.productId.title}}</div>
+    <p>{{this.productId.price}}</p>
+    <p>{{this.quantity}}</p>
+    {{/each}}
+    </div>
