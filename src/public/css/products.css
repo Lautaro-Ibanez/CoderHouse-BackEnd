@@ -1,3 +1,59 @@
 body {
-    background-color: grey;
+    background-color: rgba(219, 219, 219, 0.706);
+    height: 100vh;
+}
+
+h1 {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    margin-bottom: 50px;
+}
+
+.allProducts-box {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.contenido {
+    min-height: calc(100% - 70px);
+}
+
+.card-product {
+    background-color: rgb(255, 255, 255);
+    width: 140px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+}
+
+#buttonAdd {
+    width: 100%;
+    border: none;
+    height: 35px;
+    background-color: rgb(99, 255, 72);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    transition: all 0.3s ;
+}
+
+#buttonAdd:hover {
+    background-color: rgba(99, 255, 72, 0.572);
+    height: 45px;
+}
+
+.pagination {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+.numberPage {
+    margin-left: 40px;
+    margin-right: 40px;
 }

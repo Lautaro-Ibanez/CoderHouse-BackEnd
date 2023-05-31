@@ -1,25 +1,28 @@
-<h1>Paginate Products</h1>
-
-{{#each products}}
-<div>
-    <p> {{this.title}}</p>
-    <p>{{this.price}}</p>
-    <button id="buttonAdd" dataId={{this.id}}>add to Cart</button>
-    <br>
-    <br>
+<div class="contenido">
+    <h1>Products</h1>
+    <div class="allProducts-box">
+        {{#each products}}
+        <div class="card-product">
+            <p>Title: {{this.title}}</p>
+            <p>Precio: ${{this.price}}</p>
+            <button id="buttonAdd" dataId={{this.id}}>add to Cart</button>
+        </div>
+        {{/each}}
+    </div>
 </div>
-{{/each}}
+<div class="pagination">
+    {{#if hasPrevPage}}
+    <a href="/products/?page={{prevPage}}"><button>anterior</button></a>
+    {{/if}}
+    <div class="numberPage">
+        {{page}}
+    </div>
 
-{{#if hasPrevPage}}
-<a href="/products/?page={{prevPage}}"><button>anterior</button></a>
-{{/if}}
+    {{#if hasNextPage}}
+    <a href="/products/?page={{nextPage}}"><button>siguiente</button></a>
+    {{/if}}
+</div>
 
-{{page}}
-
-
-{{#if hasNextPage}}
-<a href="/products/?page={{nextPage}}"><button>siguiente</button></a>
-{{/if}}
 
 <script>
     const buttonAdd = document.querySelectorAll('#buttonAdd');
