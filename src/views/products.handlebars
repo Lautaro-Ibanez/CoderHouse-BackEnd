@@ -1,3 +1,9 @@
+<div class="bienvenida">
+    <h1>Hola, {{user.name}}!!</h1>
+    <h2>Correo: {{user.email}}</h2>
+    <h3>Rol: {{user.role}}</h3>
+</div>
+
 <div class="contenido">
     <h1>Products</h1>
     <div class="allProducts-box">
@@ -22,23 +28,31 @@
     <a href="/products/?page={{nextPage}}"><button>siguiente</button></a>
     {{/if}}
 </div>
+<a href="/api/sessions/logout"><button id="logout">cerrar sesion</button></a>
 
 
 <script>
     const buttonAdd = document.querySelectorAll('#buttonAdd');
-    console.log(buttonAdd)
-
     buttonAdd.forEach(function (elem) {
         elem.addEventListener('click', function (ev) {
             ev.preventDefault();
             const productId = this.getAttribute('dataId')
             console.log(productId)
-            fetch(`http://localhost:8080/api/carts/647632af04517d3f0bdf5d10/product/${productId}`, {
+            fetch(`api/carts/647632af04517d3f0bdf5d10/product/${productId}`, {
                 method: 'POST'
             })
                 .then((res) => res.json())
                 .then((data) => console.log(data))
         })
 
+        elem.addEventListener('mousedown', function () {
+            elem.classList.add('clicked')
+        })
+
+        elem.addEventListener('mouseup', function () {
+            elem.classList.remove('clicked')
+        })
+
     })
+
 </script>

@@ -1,6 +1,25 @@
 body {
     background-color: rgba(219, 219, 219, 0.706);
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#logout {
+    margin-top: 40px;
+    width: 200px;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: large;
+    background-color: rgb(29, 195, 0);
+    transition: all 0.3s;
+}
+
+#logout:hover {
+    background-color: black;
 }
 
 h1 {
@@ -18,7 +37,8 @@ h1 {
 }
 
 .contenido {
-    min-height: calc(100% - 70px);
+    min-height: calc(100% - 500px);
+    width: 100%;
 }
 
 .card-product {
@@ -39,12 +59,17 @@ h1 {
     background-color: rgb(99, 255, 72);
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-    transition: all 0.3s ;
+    transition: all 0.1s;
 }
 
 #buttonAdd:hover {
     background-color: rgba(99, 255, 72, 0.572);
     height: 45px;
+}
+
+#buttonAdd.clicked {
+    background-color: black;
+    color: white;
 }
 
 .pagination {
@@ -56,4 +81,11 @@ h1 {
 .numberPage {
     margin-left: 40px;
     margin-right: 40px;
+}
+
+.bienvenida {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }

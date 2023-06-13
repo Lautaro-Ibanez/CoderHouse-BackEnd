@@ -1,9 +1,15 @@
 <div id="cart" dataCartId="{{cart._id}}">
     {{#each cart.products}}
     <div class="product-box">
-    <p>{{this.productId.title}}</p>
-    <p>Precio: ${{this.productId.price}}</p>
-    <p>Cantidad: {{this.quantity}}</p>
+        <p>{{this.productId.title}}</p>
+        <p>Precio: ${{this.productId.price}}</p>
+        <p>Cantidad: {{this.quantity}}</p>
+        <p id="total">Total: </p>
     </div>
     {{/each}}
-    </div>
+</div>
+
+<script>
+
+
+</script>

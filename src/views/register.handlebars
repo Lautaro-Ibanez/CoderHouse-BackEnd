@@ -1,0 +1,46 @@
+<div class="form-box">
+    <h1>Registrate</h1>
+    <form id="registerForm">
+        <div class="input-box">
+            <input type="text" name="name" required class="input">
+            <label for="name" class="label">Nombre y Apellido</label>
+        </div>
+        <div class="input-box">
+            <input type="text" name="email" required class="input">
+            <label for="email" class="label">Email</label>
+        </div>
+        <div class="input-box">
+            <input type="password" name="password" required class="input" id="pass">
+            <label for="pass" class="label">Password</label>
+        </div>
+
+        <div class="button-form">
+            <button type="submit">Enviar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const form = document.getElementById("registerForm")
+
+    form.addEventListener('submit', async (evt) => {
+        evt.preventDefault();
+        const data = new FormData(form);
+        const obj = {};
+        data.forEach((value, key) => (obj[key] = value))
+        console.log(obj);
+        const result = await fetch('api/sessions/register', {
+            method: 'POST',
+            body: JSON.stringify(obj),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        const resultData = await result.json();
+        console.log(resultData.status)
+        if (resultData.status === 'Succes') {
+            window.location.replace('/login')
+        }
+    })
+
+</script>
