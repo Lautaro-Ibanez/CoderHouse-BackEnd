@@ -30,6 +30,23 @@ router.get("/:cid", async (req, res) => {
   }
 });
 
+router.get("/:cid/cantItems", async (req, res) => {
+  try {
+    const cart = await cartModel.findById(req.params.cid);
+    const productsInCart = (cart) => {
+      let cantidad = 0;
+      for (let i = 0; i < cart.products.length; i++) {
+        cantidad += cart.products[i].quantity;
+      }
+      return cantidad;
+    };
+    const quantityCartItems = productsInCart(cart);
+    res.status(200).send(quantityCartItems.toString());
+  } catch (error) {
+    res.status(400).send({ error: error });
+  }
+});
+
 router.post("/:cid/product/:pid", async (req, res) => {
   try {
     const cid = req.params.cid;
@@ -106,7 +123,7 @@ router.put("/:cid", async (req, res) => {
         .send({ status: "succes", message: "Cart Updated" });
     }
   } catch (err) {
-    console.log(err);
+
     res.status(500).send({ error: "Internal Server Error" });
   }
 });
@@ -168,7 +185,6 @@ router.delete("/:cid", async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     res.status(500).send({ error: "Internal Server Error" });
   }
 });

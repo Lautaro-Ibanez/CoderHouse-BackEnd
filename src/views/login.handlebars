@@ -2,11 +2,11 @@
     <h1>Ingresa</h1>
     <form id="loginForm">
         <div class="input-box">
-            <input type="text" name="email" required class="input">
+            <input type="text" name="email" id="email" required class="input">
             <label for="email" class="label">Email</label>
         </div>
         <div class="input-box">
-            <input type="password" name="password" required class="input">
+            <input type="password" name="password" id="password" required class="input">
             <label for="password" class="label">Password</label>
         </div>
 
@@ -14,6 +14,11 @@
             <button type="submit">Log In</button>
         </div>
     </form>
+
+    <p>También puedes ingresar por
+        <a href="/api/sessions/github"><button>Github</button></a>
+    </p>
+    <h3>No recuerdas tu contraseña ? <a href="/restorepassword">Reestablecer contraseña</a></h3>
 </div>
 
 <script>
@@ -24,7 +29,8 @@
         const data = new FormData(form);
         const obj = {};
         data.forEach((value, key) => (obj[key] = value))
-        const result = await fetch('api/sessions/login', {
+        console.log(obj)
+        const result = await fetch('/api/sessions/login', {
             method: 'POST',
             body: JSON.stringify(obj),
             headers: {
@@ -32,8 +38,8 @@
             }
         })
         const resultData = await result.json();
-        console.log(resultData.status)
-        if (resultData.status === 'succes') {
+        console.log(resultData)
+        if (resultData.status === 'success'){
             window.location.replace('/products')
         }
     })

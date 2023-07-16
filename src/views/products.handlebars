@@ -1,5 +1,5 @@
 <div class="bienvenida">
-    <h1>Hola, {{user.name}}!!</h1>
+    <h1>Hola, {{ user.name}}!!</h1>
     <h2>Correo: {{user.email}}</h2>
     <h3>Rol: {{user.role}}</h3>
 </div>
@@ -27,23 +27,47 @@
     {{#if hasNextPage}}
     <a href="/products/?page={{nextPage}}"><button>siguiente</button></a>
     {{/if}}
+
 </div>
+<a href="/carts/{{user.cart}}" cartData={{user.cart}} id="cartButton">
+    <div class="cartBox">
+        <img src="/assets/carticon.svg">
+        <div id="cartItemsCant"></div>
+    </div>
+</a>
 <a href="/api/sessions/logout"><button id="logout">cerrar sesion</button></a>
 
 
 <script>
+
     const buttonAdd = document.querySelectorAll('#buttonAdd');
+    const cartId = document.querySelector('#cartButton').getAttribute('cartData')
+    const cartItemsCant = document.getElementById('cartItemsCant')
+    fetch(`/api/carts/${cartId}/cantItems`, {
+        method: 'GET'
+    })
+        .then((res) => res.json())
+        .then((result) => cartItemsCant.innerHTML = result)
+
+
     buttonAdd.forEach(function (elem) {
-        elem.addEventListener('click', function (ev) {
+        elem.addEventListener('click', async function (ev) {
             ev.preventDefault();
             const productId = this.getAttribute('dataId')
-            console.log(productId)
-            fetch(`api/carts/647632af04517d3f0bdf5d10/product/${productId}`, {
+            await fetch(`/api/carts/${cartId}/product/${productId}`, {
                 method: 'POST'
             })
                 .then((res) => res.json())
-                .then((data) => console.log(data))
+
+            const itemsInCart = await fetch(`/api/carts/${cartId}/cantItems`, {
+                method: 'GET'
+            })
+                .then((res) => res.json())
+
+            cartItemsCant.innerHTML = itemsInCart
         })
+
+
 
         elem.addEventListener('mousedown', function () {
             elem.classList.add('clicked')

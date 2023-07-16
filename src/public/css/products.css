@@ -89,3 +89,35 @@ h1 {
     align-items: center;
     flex-direction: column;
 }
+
+#cartButton {
+    text-decoration: none;
+}
+
+.cartBox {
+    margin-top: 20px;
+    border: 2px solid black;
+    width :60px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    border-radius: 10px;
+}
+
+.cartBox img {
+    width: 35px;
+    height: 35px;
+}
+
+#cartItemsCant {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+}

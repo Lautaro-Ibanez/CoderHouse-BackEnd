@@ -1,6 +1,6 @@
 export const privacy = (privacyType) => {
   return (req, res, next) => {
-    const { user } = req.session;
+    const user = req.user;
     switch (privacyType) {
       case "PRIVATE":
         if (user) next();
@@ -12,5 +12,11 @@ export const privacy = (privacyType) => {
         else res.redirect("/products");
         break;
     }
+  };
+};
+
+export const authRole = (role) => {
+  return async (req, res, next) => {
+    
   };
 };
