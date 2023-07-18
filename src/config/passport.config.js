@@ -6,10 +6,8 @@ import GithubStrategy from "passport-github2";
 import { cookieExtractor } from "../util.js";
 import { createHash, validatePassword } from "../services/auth.js";
 
-import {
-  usersService,
-  cartsService,
-} from "../dao/mongo/mongoManagers/index.js";
+import config from "./config.js";
+import { userService, cartService } from "../services/index.js";
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = Strategy;
@@ -22,12 +20,12 @@ const initializePassportStrategies = () => {
       async (req, email, password, done) => {
         try {
           const { name, role } = req.body;
-          const exists = await usersService.getUserBy({ email });
+          const exists = await userService.getUserBy({ email });
           if (exists)
             return done(null, false, { message: "User Already Exist" });
 
           const hashedPassword = await createHash(password);
-          const cart = await cartsService.addCart();
+          const cart = await cartService.addCart();
 
           const user = {
             name,
@@ -37,7 +35,7 @@ const initializePassportStrategies = () => {
             cartId: cart._id,
           };
 
-          const result = await usersService.addUser(user);
+          const result = await userService.addUser(user);
 
           return done(null, result);
         } catch (error) {
@@ -52,7 +50,7 @@ const initializePassportStrategies = () => {
     new LocalStrategy(
       { usernameField: "email" },
       async (email, password, done) => {
-        if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
+        if (email === config.adminEmail && password === config.adminPassword) {
           const userAdmin = {
             id: 0,
             name: "admin",
@@ -62,7 +60,7 @@ const initializePassportStrategies = () => {
         }
         let user;
 
-        user = await usersService.getUserBy({ email });
+        user = await userService.getUserBy({ email });
         if (!user) {
           return done(null, false, { message: "user not found" });
         }
@@ -89,23 +87,34 @@ const initializePassportStrategies = () => {
     "github",
     new GithubStrategy(
       {
-        clientID: "Iv1.44f65959f1bef658",
-        clientSecret: "9033baeca10566e6169b92b3caa7acd83651ef01",
+        clientID: config.githubClientId,
+        clientSecret: config.gitHubClientSecret,
         callbackURL: "http://localhost:8080/api/sessions/githubCallback",
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
           const { email, name } = profile._json;
-          const user = usersService.getUserBy({ email });
+          let user;
+          user = await userService.getUserBy({ email });
           if (!user) {
+            const cart = await cartService.addCart();
             const newUser = {
               name,
               email,
               password: "",
+              cartId: cart._id,
             };
-            const result = await usersService.addUser(newUser);
-            return done(null, user);
+            const result = await userService.addUser(newUser);
+            return done(null, result);
           }
+          user = {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            cartId: user.cartId,
+          };
+          return done(null, user);
         } catch (error) {
           return done(error);
         }
@@ -124,7 +133,7 @@ const initializePassportStrategies = () => {
         name: "admin",
       });
     }
-    const user = usersService.getUserBy({ _id: id });
+    const user = userService.getUserBy({ _id: id });
     return done(null, user);
   });
 };
@@ -133,10 +142,10 @@ const initializePassportStrategies = () => {
 
 passport.use(
   "jwt",
-  new Strategy(
+  new JWTStrategy(
     {
       jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
-      secretOrKey: "jwtSecret",
+      secretOrKey: config.jwtSecret,
     },
     async (payload, done) => {
       return done(null, payload);

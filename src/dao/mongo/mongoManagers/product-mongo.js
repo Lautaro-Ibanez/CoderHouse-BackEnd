@@ -6,16 +6,22 @@ export default class ProductManager {
     return productModel.find().lean();
   };
 
+  getProductsWithPaginate = (filters, options) => {
+    return productModel.paginate(filters, options);
+  };
+
   getProductBy = (params) => {
     return productModel.findOne(params).lean();
   };
 
-  addProduct = (product) => {
+  saveProduct = (product) => {
     return productModel.create(product);
   };
 
   updateProduct = (id, product) => {
-    return productModel.findByIdAndUpdate(new mongoose.Types.ObjectId(id), { $set: product });
+    return productModel.findByIdAndUpdate(new mongoose.Types.ObjectId(id), {
+      $set: product,
+    });
   };
 
   deleteProduct = (id) => {

@@ -11,6 +11,7 @@ const schema = new mongoose.Schema(
           ref: "products",
         },
         quantity: Number,
+        _id: false,
       },
     ],
   },

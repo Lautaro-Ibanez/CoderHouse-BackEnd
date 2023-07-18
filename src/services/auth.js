@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import passport from "passport";
 import jwt from "jsonwebtoken";
+import config from "../config/config.js";
 
 //------------------------------- BCRYPT -------------------------------//
 export const createHash = async (password) => {
@@ -13,7 +14,7 @@ export const validatePassword = async (password, hashedPassword) =>
 
 //------------------------------- JWT -------------------------------//
 export const generateToken = (user) => {
-  const token = jwt.sign(user, "jwtSecret", { expiresIn: "6h" });
+  const token = jwt.sign(user, config.jwtSecret, { expiresIn: "6h" });
   return token;
 };
 
@@ -41,5 +42,22 @@ export const passportCall = (strategy, options = {}) => {
       req.user = user;
       next();
     })(req, res, next);
+  };
+};
+
+export const privacy = (privacyType) => {
+  return (req, res, next) => {
+    const user = req.user;
+    switch (privacyType) {
+      case "PRIVATE":
+        if (user) next();
+        else res.redirect("/login");
+        break;
+
+      case "NO_AUTHENTICATED":
+        if (!user) next();
+        else res.redirect("/products");
+        break;
+    }
   };
 };

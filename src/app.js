@@ -3,7 +3,6 @@ import handlebars from "express-handlebars";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
-import passport from "passport";
 
 import viewsRouter from "./routes/views-router.js";
 import productsRouter from "./routes/products-router.js";
@@ -11,18 +10,19 @@ import cartRouter from "./routes/carts-router.js";
 import SessionRouter from "./routes/session-router.js";
 import initializePassport from "./config/passport.config.js";
 
+import config from "./config/config.js";
 import helpers from "./helpers/handlebarHelpers.js";
 import registerChatHandler from "./listeners/chat-handler.js";
 import __dirname from "./util.js";
 
 /*--------------------------  Server  --------------------------*/
 const app = express();
-const PORT = process.env.PORT || 8080;
-const server = app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+const PORT = config.port || 8080;
+const server = app.listen(PORT, () => console.log(`Listening on port ${config.port}`));
 const io = new Server(server);
-const urlAtlas =
-  "mongodb+srv://EntregaCoder:123@ecommerce.ipofbng.mongodb.net/ecommerce?retryWrites=true&w=majority";
-const connection = mongoose.connect(urlAtlas);
+const connection = mongoose.connect(config.mongoURL);
+
+console.log(config)
 
 /*--------------------------  middlewares  --------------------------*/
 app.use(express.json());
