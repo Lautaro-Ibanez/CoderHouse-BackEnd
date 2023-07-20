@@ -1,5 +1,7 @@
+import { generateToken } from "../services/auth.js";
+
 const registerResponse = (req, res) => {
-  res.sendSucces("successful registration");
+  res.sendSuccess("successful registration");
 };
 
 const login = (req, res) => {
@@ -30,7 +32,6 @@ const gitCreateUser = (req, res) => {
     cart: req.user.cartId,
   };
   const accesToken = generateToken(user);
-  console.log(user);
 
   res
     .cookie("authToken", accesToken, {

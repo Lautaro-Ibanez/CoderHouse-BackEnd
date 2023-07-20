@@ -1,4 +1,4 @@
-import { passportCall, generateToken } from "../services/auth.js";
+import { passportCall } from "../services/auth.js";
 import sessionController from "../controllers/session.controller.js";
 import BaseRouter from "./router.js";
 

@@ -21,27 +21,31 @@ export const generateToken = (user) => {
 //------------------------------- PASSPORT -------------------------------//
 export const passportCall = (strategy, options = {}) => {
   return async (req, res, next) => {
-    passport.authenticate(strategy, (error, user, info) => {
-      if (error) return next(error);
-      if (!options.strategyType) {
-        console.log(`Route ${req.url} doesn't have definied strategyType`);
-        return res.sendServerError("Internal server error");
-      }
-      if (!user) {
-        switch (options.strategyType) {
-          case "jwt":
-            req.error = info.message ? info.message : info.toString();
-            return next();
-
-          case "locals":
-            return res.sendUnauthorized(
-              info.message ? info.message : info.toString()
-            );
+    passport.authenticate(
+      strategy,
+      { failureMessage: true },
+      (error, user, info) => {
+        if (error) return next(error);
+        if (!options.strategyType) {
+          console.log(`Route ${req.url} doesn't have definied strategyType`);
+          return res.sendServerError("Internal server error");
         }
+        if (!user) {
+          switch (options.strategyType) {
+            case "jwt":
+              req.error = info.message ? info.message : info.toString();
+              return next();
+
+            case "locals":
+              return res.sendUnauthorized(
+                info.message ? info.message : info.toString()
+              );
+          }
+        }
+        req.user = user;
+        next();
       }
-      req.user = user;
-      next();
-    })(req, res, next);
+    )(req, res, next);
   };
 };
 

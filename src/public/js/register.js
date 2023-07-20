@@ -6,7 +6,7 @@ form.addEventListener('submit', async (evt) => {
     const obj = {};
     data.forEach((value, key) => (obj[key] = value))
     console.log(obj);
-    const result = await fetch('api/sessions/register', {
+    const result = await fetch('/api/sessions/register', {
         method: 'POST',
         body: JSON.stringify(obj),
         headers: {
@@ -14,7 +14,7 @@ form.addEventListener('submit', async (evt) => {
         }
     })
     const resultData = await result.json();
-    console.log(resultData.status)
+    console.log(resultData)
     if (resultData.status === 'success') {
         window.location.replace('/login')
     }

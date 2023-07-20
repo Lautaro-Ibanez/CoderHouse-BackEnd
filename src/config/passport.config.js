@@ -19,24 +19,22 @@ const initializePassportStrategies = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, email, password, done) => {
         try {
-          const { name, role } = req.body;
+          const { name, email } = req.body;
           const exists = await userService.getUserBy({ email });
-          if (exists)
+          if (exists) {
             return done(null, false, { message: "User Already Exist" });
+          }
 
           const hashedPassword = await createHash(password);
           const cart = await cartService.addCart();
 
-          const user = {
+          const newUser = {
             name,
             email,
             password: hashedPassword,
-            role,
             cartId: cart._id,
           };
-
-          const result = await userService.addUser(user);
-
+          const result = await userService.addUser(newUser);
           return done(null, result);
         } catch (error) {
           done(error);

@@ -7,8 +7,8 @@ export default class UsersService {
     return this.dao.getUsers();
   };
 
-  addUser = () => {
-    return this.dao.saveUser();
+  addUser = (user) => {
+    return this.dao.saveUser(user);
   };
 
   getUserBy = (params) => {
