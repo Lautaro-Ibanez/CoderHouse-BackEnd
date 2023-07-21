@@ -4,13 +4,12 @@ import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
 
 import viewsRouter from "./routes/views-router.js";
-import productsRouter from "./routes/products-router.js";
-import cartRouter from "./routes/carts-router.js";
+import ProductRouter from "./routes/products-router.js";
+import CartRouter from "./routes/carts-router.js";
 import SessionRouter from "./routes/session-router.js";
-import mailRouter from "./routes/email-router.js"
+import mailRouter from "./routes/sendMessage-router.js";
 
 import initializePassport from "./config/passport.config.js";
-
 
 import config from "./config/config.js";
 import helpers from "./helpers/handlebarHelpers.js";
@@ -40,12 +39,14 @@ app.set("view engine", "handlebars");
 
 /*--------------------------  routes  --------------------------*/
 const sessionRouter = new SessionRouter();
+const productRouter = new ProductRouter();
+const cartRouter = new CartRouter();
 
 app.use("/", viewsRouter);
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartRouter);
+app.use("/api/products", productRouter.getRouter());
+app.use("/api/carts", cartRouter.getRouter());
 app.use("/api/sessions", sessionRouter.getRouter());
-app.use("/api/mail", mailRouter)
+app.use("/api/send", mailRouter);
 
 /*--------------------------  WebSockets  --------------------------*/
 io.on("connection", (socket) => {

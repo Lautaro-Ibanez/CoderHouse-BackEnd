@@ -1,16 +1,16 @@
-import { Router } from "express";
+import BaseRouter from "./router.js";
 import productsController from "../controllers/products.controller.js";
 
-const router = Router();
+export default class ProductRouter extends BaseRouter {
+  init() {
+    this.get("/", ["ADMIN", "USER"], productsController.getProducts);
 
-router.get("/", productsController.getProducts);
+    this.post("/", ["ADMIN", "USER"], productsController.addProduct);
 
-router.post("/", productsController.addProduct);
+    this.get("/:pid", ["ADMIN", "USER"], productsController.getProductById);
 
-router.get("/:pid", productsController.getProductById);
+    this.put("/:pid", ["ADMIN", "USER"], productsController.updateProduct);
 
-router.put("/:pid", productsController.updateProduct);
-
-router.delete("/:pid", productsController.deleteProduct);
-
-export default router;
+    this.delete("/:pid", ["ADMIN", "USER"], productsController.deleteProduct);
+  }
+}

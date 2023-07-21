@@ -22,5 +22,8 @@ export default {
   gitHubClientSecret: process.env.GITHUB_CLIENT_SECRET,
   githubClientId: process.env.GITHUB_CLIENT_ID,
   appMailPassword: process.env.APP_MAIL_PASSWORD,
-  appMail: process.env.APP_MAIL
+  appMail: process.env.APP_MAIL,
+  twilioNumber: process.env.TWILIO_NUMBER,
+  twilioSid: process.env.TWILIO_SID,
+  twilioToken: process.env.TWILIO_TOKEN
 };

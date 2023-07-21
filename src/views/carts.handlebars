@@ -1,10 +1,18 @@
-<div id="cart" dataCartId="{{cart._id}}">
+<div class="cartBody">
+<div id="cart" class="cartClass" dataCartId="{{cart._id}}">
     {{#each cart.products}}
     <div class="product-box">
         <p>{{this.productId.title}}</p>
         <p>Precio: ${{this.productId.price}}</p>
         <p>Cantidad: {{this.quantity}}</p>
         <p id="total">Total: ${{multiplicar this.productId.price this.quantity}} </p>
+        <button id="deleteProduct" dataId={{this.productId._id}}>eliminar producto</button>
     </div>
     {{/each}}
 </div>
+
+<button id="purchase">Finalizar Compra</button>
+
+</div>
+
+<script src="/js/cart.js"></script>

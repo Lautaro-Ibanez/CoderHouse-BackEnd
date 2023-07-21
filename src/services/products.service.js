@@ -7,8 +7,8 @@ export default class ProductsService {
     return this.dao.getProducts();
   };
 
-  addProduct = () => {
-    return this.dao.saveProduct();
+  addProduct = (product) => {
+    return this.dao.saveProduct(product);
   };
 
   getProductBy = (params) => {

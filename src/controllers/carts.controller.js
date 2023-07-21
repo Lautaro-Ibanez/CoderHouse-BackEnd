@@ -1,5 +1,25 @@
-import { cartService, productService } from "../services/index.js";
+import {
+  cartService,
+  productService,
+  ticketService,
+} from "../services/index.js";
 import mongoose from "mongoose";
+
+const uniqueCodeGenerator = () => {
+  const fechaActual = new Date().getTime();
+  const numeroAleatorio = Math.floor(Math.random() * 10000);
+  return `${fechaActual}-${numeroAleatorio}`;
+};
+
+const generateTicket = (amount, purchaser) => {
+  const code = uniqueCodeGenerator();
+  const ticket = {
+    code,
+    amount,
+    purchaser,
+  };
+  return ticket;
+};
 
 const cartExistence = async (cid) => {
   // funcion reutilizable para buscar existencia de carrito
@@ -123,12 +143,10 @@ const cartUpdateWithBody = async (req, res) => {
   try {
     const { cid } = req.params;
     const arrayProducts = req.body;
-    const productsWithObjectId = arrayProducts.products.map((product) => (
-      {
+    const productsWithObjectId = arrayProducts.products.map((product) => ({
       productId: new mongoose.Types.ObjectId(product.productId),
       quantity: product.quantity,
-    }
-    ));
+    }));
     const result = await cartService.updateCart(cid, productsWithObjectId);
     if (result) {
       return res
@@ -136,7 +154,7 @@ const cartUpdateWithBody = async (req, res) => {
         .send({ status: "succes", message: "Cart Updated" });
     }
   } catch (err) {
-    res.status(500).send({ error: 'Internal server error' });
+    res.status(500).send({ error: "Internal server error" });
   }
 };
 
@@ -180,6 +198,86 @@ const deleteCart = async (req, res) => {
   }
 };
 
+const purchase = async (req, res) => {
+  // defino parametros que voy a utilizar para construir el servicio
+  const { cid } = req.params;
+  const user = req.user;
+  const cart = await cartService.getCartBy({ _id: cid });
+  const arrayProducts = cart.products;
+
+  // la siguiente variable se utiliza para almacenar los productos
+  // que no tengan la disponibilidad de stock solicitada
+  let productsOutStock = [];
+
+  // totalPrice acumula el precio total de los productos
+  // que si tengan disponibilidad de stock solicitado
+  let totalPrice = 0;
+
+  // si el carrito esta vacio, devuelvo un error
+  if (arrayProducts.length <= 0) {
+    return res
+      .status(400)
+      .send({ status: "error", error: "no products in the cart" });
+  }
+
+  // passProduct la utilizo como acumulador para saber si por lo menos un producto
+  // se logro "completar su compra"
+  let passProductCount = 0;
+
+  // por cada producto dentro del carrito del usuario, se verifica si la cantidad solicitada
+  // es menor o mayor que el stock disponible
+
+  arrayProducts.forEach(async (product) => {
+    if (product.quantity <= product.productId.stock) {
+      const newStock = {
+        stock: product.productId.stock - product.quantity,
+      };
+
+      totalPrice += product.productId.price * product.quantity;
+      passProductCount = passProductCount + 1;
+      await productService.updateProduct(product.productId._id, newStock);
+      await cartService.deleteProductFromCart(cid, product.productId._id);
+    } else {
+      productsOutStock.push(product.productId._id);
+    }
+  });
+
+  // utilizo la funcion para generar un codigo unico que se insertara en el ticket
+
+  // ahora si passProduct es = 0 entonces ningun producto
+  // logro completar su compra por lo tanto solo si passProduct > 0 genero el ticket.
+
+  if (passProductCount > 0 && productsOutStock.length === 0) {
+    const ticket = generateTicket(totalPrice, user.email);
+    const result = await ticketService.addTicket(ticket);
+    return res
+      .status(200)
+      .send({ status: "success", message: "purchase completed successfully" });
+  }
+
+  if (passProductCount > 0 && productsOutStock.length > 0) {
+    const ticket = generateTicket(totalPrice, user.email);
+    const result = await ticketService.addTicket(ticket);
+    return res.status(200).send({
+      status: "succes",
+      message:
+        "The purchase was completed successfully, but some products are not in the requested quantity",
+      payload: productsOutStock,
+    });
+  }
+
+  if (passProductCount === 0 && productsOutStock.length > 0) {
+    return res.status(400).send({
+      status: "succes",
+      message:
+        "sorry, we don't have stock at the moment",
+      payload: productsOutStock,
+    });
+  }
+
+  return res.status(500).send({ status: "error", message: "Purchase error" });
+};
+
 export default {
   getCarts,
   addCart,
@@ -190,4 +288,5 @@ export default {
   cartUpdateWithBody,
   productInCartUpdate,
   deleteCart,
+  purchase,
 };

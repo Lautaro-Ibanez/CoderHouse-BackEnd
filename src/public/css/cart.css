@@ -10,10 +10,37 @@
     display: flex;
     flex-direction: column;
     background-color: aquamarine;
-    padding: 10px;
     border-radius: 5px;
     border-color: black;
     border: 1px solid black;
     align-items: center;
     justify-content: space-evenly;
+}
+
+
+
+#deleteProduct {
+    width: 100%;
+    height: 30px;
+    border: none;
+    border-radius: 0 0 5px 5px;
+    transition: all 0.5s ease;
+    cursor:pointer;
+}
+
+#deleteProduct:hover {
+    color:white;
+    background-color: black;
+}
+
+.cartBody {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#purchase {
+    width: 150px;
 }
