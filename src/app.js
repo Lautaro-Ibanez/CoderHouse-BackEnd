@@ -8,11 +8,11 @@ import ProductRouter from "./routes/products-router.js";
 import CartRouter from "./routes/carts-router.js";
 import SessionRouter from "./routes/session-router.js";
 import mailRouter from "./routes/sendMessage-router.js";
+import mockRouter from "./routes/mock-router.js"
 
 import initializePassport from "./config/passport.config.js";
 
 import config from "./config/config.js";
-import helpers from "./helpers/handlebarHelpers.js";
 import registerChatHandler from "./listeners/chat-handler.js";
 import __dirname from "./util.js";
 
@@ -47,6 +47,7 @@ app.use("/api/products", productRouter.getRouter());
 app.use("/api/carts", cartRouter.getRouter());
 app.use("/api/sessions", sessionRouter.getRouter());
 app.use("/api/send", mailRouter);
+app.use("/", mockRouter)
 
 /*--------------------------  WebSockets  --------------------------*/
 io.on("connection", (socket) => {
