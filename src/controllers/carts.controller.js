@@ -1,9 +1,12 @@
+import CustomError from "../services/errors/customError.js";
 import {
   cartService,
   productService,
   ticketService,
 } from "../services/index.js";
 import mongoose from "mongoose";
+import generateInsertProductToCartErrorInfo from "../services/errors/info.js";
+import EErrors from "../services/errors/EEnum.js";
 
 const uniqueCodeGenerator = () => {
   const fechaActual = new Date().getTime();
@@ -85,7 +88,7 @@ const getQuantityItems = async (req, res) => {
   }
 };
 
-const addProductToCart = async (req, res) => {
+const addProductToCart = async (req, res, next) => {
   // esta funcion agrega un producto al carrito con un quantity inicial de 1
   // o aumenta este valor en 1 si dicho producto ya se encuentra en el carrito
   try {
@@ -108,10 +111,19 @@ const addProductToCart = async (req, res) => {
       return res.send({ status: "Succes", message: "Product increment one" });
 
     // en caso de que fallen las consultas
-    res.status(500).send({ status: "error", error: "could not update cart" });
+    CustomError.createError({
+      name: "Insert product to cart error",
+      cause: generateInsertProductToCartErrorInfo(
+        productService.getProductBy(
+          { _id: pid },
+          cartService.getCartBy({ _id: cid })
+        )
+      ),
+      message: "Error when trying to add product to cart",
+      code: EErrors.DATABASE_ERROR,
+    });
   } catch (err) {
-    console.log("Error al manejar la solicitud:", err);
-    res.status(500).send({ status: "error", error: "Internal Server Error" });
+    next(err);
   }
 };
 
@@ -199,7 +211,7 @@ const deleteCart = async (req, res) => {
 };
 
 const purchase = async (req, res) => {
-  // defino parametros que voy a utilizar para construir el servicio
+  // defino parametros que voy a utilizar para construir el controlador
   const { cid } = req.params;
   const user = req.user;
   const cart = await cartService.getCartBy({ _id: cid });
@@ -268,9 +280,8 @@ const purchase = async (req, res) => {
 
   if (passProductCount === 0 && productsOutStock.length > 0) {
     return res.status(400).send({
-      status: "succes",
-      message:
-        "sorry, we don't have stock at the moment",
+      status: "error",
+      message: "sorry, we don't have stock at the moment",
       payload: productsOutStock,
     });
   }

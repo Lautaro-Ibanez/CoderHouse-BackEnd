@@ -8,10 +8,12 @@ import ProductRouter from "./routes/products-router.js";
 import CartRouter from "./routes/carts-router.js";
 import SessionRouter from "./routes/session-router.js";
 import mailRouter from "./routes/sendMessage-router.js";
-import mockRouter from "./routes/mock-router.js"
+import mockRouter from "./routes/mock-router.js";
 
 import initializePassport from "./config/passport.config.js";
 
+import errorHandler from "./middlewares/errors/index.js";
+import helper from "./helpers/handlebarHelpers.js";
 import config from "./config/config.js";
 import registerChatHandler from "./listeners/chat-handler.js";
 import __dirname from "./util.js";
@@ -47,9 +49,10 @@ app.use("/api/products", productRouter.getRouter());
 app.use("/api/carts", cartRouter.getRouter());
 app.use("/api/sessions", sessionRouter.getRouter());
 app.use("/api/send", mailRouter);
-app.use("/", mockRouter)
+app.use("/", mockRouter);
 
 /*--------------------------  WebSockets  --------------------------*/
 io.on("connection", (socket) => {
   registerChatHandler(io, socket);
 });
+app.use(errorHandler);

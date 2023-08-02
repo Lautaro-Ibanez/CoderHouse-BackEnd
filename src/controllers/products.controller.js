@@ -1,3 +1,6 @@
+import EErrors from "../services/errors/EEnum.js";
+import CustomError from "../services/errors/customError.js";
+import info from "../services/errors/info.js";
 import { productService } from "../services/index.js";
 
 const getProducts = async (req, res) => {
@@ -48,42 +51,60 @@ const getProducts = async (req, res) => {
   });
 };
 
-const addProduct = async (req, res) => {
-  const {
-    title,
-    price,
-    description,
-    thumbnail,
-    code,
-    stock,
-    status,
-    category,
-  } = req.body;
-  if (
-    !title ||
-    !price ||
-    !description ||
-    !thumbnail ||
-    !code ||
-    !stock ||
-    !category
-  )
-    return res
-      .status(400)
-      .send({ status: "error", error: "imcomplete values" });
+const addProduct = async (req, res, next) => {
+  try {
+    const {
+      title,
+      price,
+      description,
+      thumbnail,
+      code,
+      stock,
+      status,
+      category,
+    } = req.body;
+    if (
+      !title ||
+      !price ||
+      !description ||
+      !thumbnail ||
+      !code ||
+      !stock ||
+      !category
+    ) {
+      CustomError.createError({
+        name: "Product creation error",
+        cause: info.generateProductErrorInfo({
+          title,
+          price,
+          description,
+          thumbnail,
+          code,
+          stock,
+          status,
+          category,
+        }),
+        message: "Error trying to create product",
+        code: EErrors.INCOMPLETE_VALUES_ERROR,
+        status: 400,
+      });
+    }
 
-  const product = {
-    title,
-    price,
-    description,
-    thumbnail,
-    code,
-    stock,
-    status,
-    category,
-  };
-  const result = await productService.addProduct(product);
-  res.send({ status: "succes", message: "Product Added" });
+    const product = {
+      title,
+      price,
+      description,
+      thumbnail,
+      code,
+      stock,
+      status,
+      category,
+    };
+    const result = await productService.addProduct(product);
+    res.send({ status: "succes", message: "Product Added" });
+  } catch (err) {
+    next(err);
+  }
 };
 
 const getProductById = async (req, res) => {
@@ -113,7 +134,7 @@ const deleteProduct = async (req, res) => {
     const result = await productService.deleteProduct(pid);
     res.send({ status: "succes", message: "Product Deleted" });
   } catch (err) {
-    res.status(404).send({status:"error", error: err });
+    res.status(404).send({ status: "error", error: err });
   }
 };
 
@@ -122,5 +143,5 @@ export default {
   addProduct,
   getProductById,
   updateProduct,
-  deleteProduct
+  deleteProduct,
 };
