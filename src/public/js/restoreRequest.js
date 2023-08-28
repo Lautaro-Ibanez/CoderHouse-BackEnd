@@ -1,17 +1,13 @@
 const form = document.getElementById("restorePasswordForm");
-const text = document.getElementById("text");
-
-const params = new URLSearchParams(window.location.search);
-const token = params.get("token");
+const text = document.getElementById("text")
 
 form.addEventListener("submit", async (evt) => {
   evt.preventDefault();
   const data = new FormData(form);
   const obj = {};
   data.forEach((value, key) => (obj[key] = value));
-  obj.token = token
-  console.log(obj)
-  const result = await fetch("api/sessions/restorePassword", {
+  console.log(obj);
+  const result = await fetch("api/sessions/restoreRequest", {
     method: "POST",
     body: JSON.stringify(obj),
     headers: {
@@ -19,12 +15,12 @@ form.addEventListener("submit", async (evt) => {
     },
   });
   const resultData = await result.json();
+  console.log(resultData);
   if (resultData.status === "error") {
-    text.innerHTML = "no puedes cambiar tu contraseña con la actual";
+    text.innerHTML = "No se encontro el correo electronico";
   }
 
   if (resultData.status === "success") {
-    text.innerHTML =
-      "contraseña cambiada con exito";
+    text.innerHTML = "Se envio el correo con exito, por favor revise su casilla de correos"
   }
 });

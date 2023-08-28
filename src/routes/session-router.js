@@ -17,6 +17,11 @@ export default class SessionRouter extends BaseRouter {
 
     this.get("/githubCallback",["NO_AUTH"],passportCall("github", { strategyType: "locals" }),sessionController.gitCreateUser);
     
+    this.post("/restoreRequest",["PUBLIC"], sessionController.restoreRequest);
+
+    this.post("/restorePassword",["NO_AUTH"], sessionController.restorePassword);
+
+    
   }
 
 }

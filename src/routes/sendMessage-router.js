@@ -27,7 +27,7 @@ router.get("/mail", async (req, res) => {
   const result = await transport.sendMail({
     from: "Lauti <mombusssss@gmail.com>",
     to: "lautaro.ibanez.1995@gmail.com",
-    subject: "test mail",
+    subject: "test mail", 
     html: `
     <div>
     <h1>Correo de prueba</h1>

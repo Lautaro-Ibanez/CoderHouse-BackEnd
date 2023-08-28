@@ -1,4 +1,4 @@
-import CustomError from "../services/errors/customError.js";
+import CustomError from "../services/errors/CustomError.js";
 import {
   cartService,
   productService,

@@ -13,8 +13,8 @@ export const validatePassword = async (password, hashedPassword) =>
   bcrypt.compare(password, hashedPassword);
 
 //------------------------------- JWT -------------------------------//
-export const generateToken = (user) => {
-  const token = jwt.sign(user, config.jwtSecret, { expiresIn: "6h" });
+export const generateToken = (user, expiresIn = "6h") => {
+  const token = jwt.sign(user, config.jwtSecret, { expiresIn });
   return token;
 };
 

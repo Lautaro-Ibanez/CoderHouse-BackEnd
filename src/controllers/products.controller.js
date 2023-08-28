@@ -1,5 +1,5 @@
 import EErrors from "../services/errors/EEnum.js";
-import CustomError from "../services/errors/customError.js";
+import CustomError from "../services/errors/CustomError.js";
 import info from "../services/errors/info.js";
 import { productService } from "../services/index.js";
 

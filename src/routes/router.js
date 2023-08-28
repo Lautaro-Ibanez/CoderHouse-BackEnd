@@ -69,6 +69,14 @@ export default class BaseRouter {
     res.sendServerError = (error) =>
       res.status(500).send({ status: "error", error });
 
+    res.sendBadRequest = (message) => {
+      res.status(400).send({ status: "error", message });
+    };
+
+    res.sendNotFound = (message) => {
+      res.status(404).send({ status: "error", message });
+    };
+
     next();
   }
 

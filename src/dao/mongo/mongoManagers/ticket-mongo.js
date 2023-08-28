@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import ticketModel from "../models/Ticket-model.js";
+import ticketModel from "../models/ticket-model.js";
 
 export default class TicketManager {
   saveTicket = (ticket) => {

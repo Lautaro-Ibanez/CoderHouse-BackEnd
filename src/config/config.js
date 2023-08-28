@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 import { Command } from "commander";
 
 const program = new Command();
-program.opts("-m, --mode <mode>", "Modo de ejecucion", "prod");
-program.parse();
+program.option("-m, --mode <mode>", "Modo de ejecucion", "prod");
+program.parse(process.argv);
 
 dotenv.config({
   path:
@@ -25,5 +25,6 @@ export default {
   appMail: process.env.APP_MAIL,
   twilioNumber: process.env.TWILIO_NUMBER,
   twilioSid: process.env.TWILIO_SID,
-  twilioToken: process.env.TWILIO_TOKEN
+  twilioToken: process.env.TWILIO_TOKEN,
+  loggerEnv: process.env.LOGGER_ENV
 };

@@ -1,5 +1,17 @@
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import fs from "fs";
+import Handlebars from "handlebars";
+
+export const generateMailTemplate = async (template, payload) => {
+  const content = await fs.promises.readFile(
+    `${__dirname}/templates/${template}.handlebars`,
+    "utf-8"
+  );
+  const preCompiledContent = Handlebars.compile(content);
+  const compiledContent = preCompiledContent({ ...payload });
+  return compiledContent;
+};
 
 //------------------------------- COOKIE -------------------------------//
 

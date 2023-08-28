@@ -1,38 +1,52 @@
-import { Router } from "express";
 import viewsController from "../controllers/views.controller.js";
 import { passportCall, privacy } from "../services/auth.js";
+import BaseRouter from "./router.js";
 
-const router = Router();
+export default class ViewsRouter extends BaseRouter {
+  init() {
+    this.get("/chat", ["PUBLIC"], viewsController.renderChat);
 
-router.get("/chat", viewsController.renderChat);
+    this.get(
+      "/products",
+      ["PUBLIC"],
+      passportCall("jwt", { strategyType: "jwt" }),
+      privacy("PRIVATE"),
+      viewsController.renderProducts
+    );
 
-router.get(
-  "/products",
-  passportCall("jwt", { strategyType: "jwt" }),
-  privacy("PRIVATE"),
-  viewsController.renderProducts
-);
+    this.get(
+      "/carts/:cid",
+      [""],
+      passportCall("jwt", { strategyType: "jwt" }),
+      viewsController.renderCartById
+    );
 
-router.get(
-  "/carts/:cid",
-  passportCall("jwt", { strategyType: "jwt" }),
-  viewsController.renderCartById
-);
+    this.get(
+      "/register",
+      ["NO_AUTH"],
+      passportCall("jwt", { strategyType: "jwt" }),
+      privacy("NO_AUTHENTICATED"),
+      viewsController.renderRegister
+    );
 
-router.get(
-  "/register",
-  passportCall("jwt", { strategyType: "jwt" }),
-  privacy("NO_AUTHENTICATED"),
-  viewsController.renderRegister
-);
+    this.get(
+      "/login",
+      ["NO_AUTH"],
+      passportCall("jwt", { strategyType: "jwt" }),
+      privacy("NO_AUTHENTICATED"),
+      viewsController.renderLogin
+    );
 
-router.get(
-  "/login",
-  passportCall("jwt", { strategyType: "jwt" }),
-  privacy("NO_AUTHENTICATED"),
-  viewsController.renderLogin
-);
+    this.get(
+      "/restoreRequest",
+      ["PUBLIC"],
+      viewsController.renderRestoreRequest
+    );
 
-router.get("/restorepassword", viewsController.renderRestorePassword);
-
-export default router;
+    this.get(
+      "/restorePassword",
+      ["NO_AUTH"],
+      viewsController.renderRestorePassword
+    );
+  }
+}
