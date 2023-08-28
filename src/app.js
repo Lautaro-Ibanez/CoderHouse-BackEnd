@@ -21,6 +21,7 @@ import config from "./config/config.js";
 import registerChatHandler from "./listeners/chat-handler.js";
 import __dirname from "./util.js";
 import ViewsRouter from "./routes/views-router.js";
+import UsersRouter from "./routes/users-router.js";
 
 const cpus = os.cpus().length;
 
@@ -62,6 +63,7 @@ if (cluster.isPrimary) {
   const productRouter = new ProductRouter();
   const cartRouter = new CartRouter();
   const viewsRouter = new ViewsRouter();
+  const usersRouter = new UsersRouter();
 
   app.get("/loggerTest", (req, res) => {
     req.logger.debug(`log de debug`);
@@ -88,6 +90,7 @@ if (cluster.isPrimary) {
   app.use("/api/carts", cartRouter.getRouter());
   app.use("/api/sessions", sessionRouter.getRouter());
   app.use("/api/send", mailRouter);
+  app.use("/api/users", usersRouter.getRouter())
   app.use("/", mockRouter);
 
   /*--------------------------  WebSockets  --------------------------*/

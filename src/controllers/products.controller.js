@@ -1,7 +1,7 @@
 import EErrors from "../services/errors/EEnum.js";
 import CustomError from "../services/errors/CustomError.js";
 import info from "../services/errors/info.js";
-import { productService } from "../services/index.js";
+import { productService, userService } from "../services/index.js";
 
 const getProducts = async (req, res) => {
   // esta funcion devuelve todos los productos en la base de datos
@@ -52,6 +52,7 @@ const getProducts = async (req, res) => {
 };
 
 const addProduct = async (req, res, next) => {
+  const ownerMail = req.user.email;
   try {
     const {
       title,
@@ -99,6 +100,7 @@ const addProduct = async (req, res, next) => {
       stock,
       status,
       category,
+      owner: ownerMail,
     };
     const result = await productService.addProduct(product);
     res.send({ status: "succes", message: "Product Added" });
@@ -119,22 +121,47 @@ const getProductById = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
+    const owner = req.user.email;
     const { pid } = req.params;
-    const updateProduct = req.body;
-    const result = await productService.updateProduct(pid, updateProduct);
-    res.status(201).send({ status: "success", message: "Product Updated" });
+    const product = await productService.getProductBy({ _id: pid });
+    if (!product)
+      return res.send({ status: "error", message: "product not found" });
+
+    if (product.owner === owner || owner === "admin") {
+      const updateProduct = req.body;
+      const result = await productService.updateProduct(pid, updateProduct);
+      res.status(201).send({ status: "success", message: "Product Updated" });
+    } else {
+      return res.send({
+        status: "error",
+        message: "you cannot update products that are not yours",
+      });
+    }
   } catch (err) {
-    res.status(404).send({ status: "error", error: "Product Not Found" });
+    console.log(err);
+    res.status(500).send({ status: "error", error: "Internal server error" });
   }
 };
 
 const deleteProduct = async (req, res) => {
   try {
+    const owner = req.user.email;
     const { pid } = req.params;
-    const result = await productService.deleteProduct(pid);
-    res.send({ status: "succes", message: "Product Deleted" });
+    const product = await productService.getProductBy({ _id: pid });
+    if (!product)
+      return res.send({ status: "error", message: "product not found" });
+
+    if (product.owner === owner || owner === "admin") {
+      const result = await productService.deleteProduct(pid);
+      res.send({ status: "succes", message: "Product Deleted" });
+    } else {
+      return res.send({
+        status: "error",
+        message: "you cannot delete products that are not yours",
+      });
+    }
   } catch (err) {
-    res.status(404).send({ status: "error", error: err });
+    res.status(500).send({ status: "error", error: err });
   }
 };
 

@@ -5,12 +5,12 @@ export default class ProductRouter extends BaseRouter {
   init() {
     this.get("/", ["ADMIN", "USER"], productsController.getProducts);
 
-    this.post("/", ["ADMIN", "USER"], productsController.addProduct);
+    this.post("/", ["ADMIN", "PREMIUN"], productsController.addProduct);
 
     this.get("/:pid", ["ADMIN", "USER"], productsController.getProductById);
 
-    this.put("/:pid", ["ADMIN", "USER"], productsController.updateProduct);
+    this.put("/:pid", ["ADMIN", "PREMIUN"], productsController.updateProduct);
 
-    this.delete("/:pid", ["ADMIN", "USER"], productsController.deleteProduct);
+    this.delete("/:pid", ["ADMIN", "PREMIUN"], productsController.deleteProduct);
   }
 }

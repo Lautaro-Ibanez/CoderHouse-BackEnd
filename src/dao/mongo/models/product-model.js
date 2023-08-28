@@ -11,6 +11,10 @@ const schema = new mongoose.Schema(
     thumbnail: String,
     code: String,
     stock: Number,
+    owner: {
+      type: String,
+      default: "admin",
+    },
     status: {
       type: Boolean,
       default: true,

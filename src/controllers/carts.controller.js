@@ -93,13 +93,17 @@ const addProductToCart = async (req, res, next) => {
   // o aumenta este valor en 1 si dicho producto ya se encuentra en el carrito
   try {
     const { cid, pid } = req.params;
-
     // me fijo si existe carrito
-    cartExistence(cid);
+    const cart = cartExistence(cid);
 
     // me fijo si existe producto
-    productExistence(pid);
+    const product = await productExistence(pid);
 
+    //me fijo si el usuario esta intentando añadir un producto suyo al carrito
+    const ownerMail = req.user.email
+  
+    if (product.owner === ownerMail) return res.sendBadRequest("you cannot add a product that you own to the cart")
+    
     // primera consulta, si no hay producto lo agrego con quantity = 1
     const productNotExist = await cartService.addProductToCart(cid, pid);
     if (productNotExist)
