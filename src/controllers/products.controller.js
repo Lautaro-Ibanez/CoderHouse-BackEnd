@@ -4,7 +4,8 @@ import info from "../services/errors/info.js";
 import { productService, userService } from "../services/index.js";
 
 const getProducts = async (req, res) => {
-  // esta funcion devuelve todos los productos en la base de datos
+  try {
+      // esta funcion devuelve todos los productos en la base de datos
   let filtros = {};
   if (req.query.category) {
     filtros = { ...filtros, category: req.query.category };
@@ -49,6 +50,10 @@ const getProducts = async (req, res) => {
     nextLink,
     page,
   });
+  } catch (error) {
+    res.sendInternalError('server error')
+  }
+
 };
 
 const addProduct = async (req, res, next) => {

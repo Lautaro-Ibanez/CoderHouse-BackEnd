@@ -1,0 +1,286 @@
+paths:
+  /api/carts:
+    get:
+      summary: devuelve todos los carritos
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: los carritos se obtienen correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Cart'
+        "500":
+          description:  error interno del servidor, en este endpoint se debera a un error en la base de datos
+    post:
+      summary: crea un carrito
+      tags:
+        - Carts
+      responses:
+        "200":
+          desciption: carrito creado con exito
+  /api/carts/{cid}:
+    get:
+      summary:  obtiene el carrito con dicho id
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: id del carrito
+        schema:
+          type: string
+      responses:
+        "200":
+          description:  carrito obtenido con exito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: id unico del carrito
+                  products:
+                    type: array
+                    items:
+                      $ref: '#components/schemas/ItemCartPopulate'
+    put:
+      summary: busca y actualiza el array de productos de un carrito especifico con dicho id
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: id del carrito
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/requestBodies/UpdateCart'
+      responses:
+        "200":
+          description:  carrito actualizado con exito
+        "404":
+          description:  carrito no encontrado
+        "500":
+          description:  error interno del servidor, en este endpoint se debera a un error en la base de datos
+    delete:
+      summary:  elimina un carrito con dicho cid
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: id del carrito
+        schema:
+          type: string
+      responses:
+        "200":
+          description:  carrito borrado con exito
+        "404":
+          description:  carrito no encontrado
+        "500":
+          description:  error interno del servidor, en este endpoint se debera a un error en la base de datos
+  /api/carts/{cid}/cantItems:
+    get:
+      summary:  obtiene la cantidad de unidades totales de productos en el carrito
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: id del carrito
+        schema:
+          type: string
+      responses:
+        "200":
+          description:  cantidad de productos obtenidos con exito
+          content:
+            text/plain:
+              schema:
+                type: string
+        "404":
+          description:  carrito no encontrado
+        "500":
+          description:  error interno del servidor, en este endpoint se debera a un error en la base de datos
+  /api/carts/{cid}/product/{pid}:
+    post:
+      summary:  introduce un producto al carrito, si este ya estaba en el carrito aumenta si quantity en 1
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: id del carrito
+        schema:
+          type: string
+      - name: pid
+        in: path
+        description: id del producto en el carrito
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: producto agregado o incrementado con exito
+        "404":
+          description: carrito o producto no encontrado
+        "400":
+          description: error al intentar agregar al carrito un producto de su propiedad
+        "500":
+          description:  error interno del servidor, en este endpoint se debera a un error en la base de datos
+    delete:
+      summary:  elimina un producto dentro de un carrito
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: id del carrito
+        schema:
+          type: string
+      - name: pid
+        in: path
+        description: id del producto en el carrito
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description:  producto eliminado del carrito con exito
+        "404":
+          description:  carrito o producto no encontrado
+        "500":
+          description:  error interno del servidor, en este endpoint se debera a un error en la base de datos
+    put:
+      summary:  dentro del carrito seleccionado con cid, actualiza la quantity del producto seleccionado con pid
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: id del carrito
+        schema:
+          type: string
+      - name: pid
+        in: path
+        description: id del producto en el carrito
+        required: true
+        schema:
+          type: string
+      responses:
+        "200": 
+          description:  producto en carrito actualizado con exito
+        "404": 
+          description:  carrito o producto no encontrado
+        "500": 
+          description:  error interno del servidor, en este endpoint se debera a un error en la base de datos
+  /api/carts/{cid}/purchase:
+    get:
+      summary: crea un ticket de compra de los productos dentro del carrito y se descuenta el stock, si hay, de dichos productos
+      tags:
+        - Carts
+      parameters:
+      - name: cid
+        in: path
+        required: true
+        description: id del carrito
+        schema:
+          type: string
+      responses:
+        "200":
+          description:  compra realizada con exito || compra realizada con exito pero algunos productos no cumplian con el stock solicitado
+        "404":
+          description:  carrito no encontrado
+        "400":
+          description:  sin stock de los productos
+        "500":
+          description:  error interno del servidor, en este endpoint se debera a un error en la base de datos
+
+
+
+components:
+  schemas:
+    ItemCartPopulate:
+      type: object
+      properties:
+        productId:
+          type: object
+          description:  producto con el id proporcionado + populate
+          properties:
+            _id:
+              type: string
+              description: id unico del producto
+            title:
+              type: string
+              description: titulo del producto
+            description:
+              type: string
+              description: descripción del producto
+            category:
+              type: string
+              description: categoria del producto
+            price:
+              type: number
+              description: precio del producto
+            stock:
+              type: number
+              description: stock del producto
+            thumbnail:
+              type: string
+              description: url de la imagen del producto
+            code:
+              type: string
+              description: codigo del producto
+            owner:
+              type: string
+              description: propietario de producto
+            status:
+              type: boolean
+              description: estatus del producto
+        quantity:
+          type: number
+          description:  cantidad seleccionada del producto
+    ItemCart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description:  id unico del producto
+        quantity:
+          type: number
+          description:  cantidad seleccionada del producto
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: id unico del carrito
+        products:
+          type: array
+          description: array con los id's de los productos
+          items:
+            $ref: '#components/schemas/ItemCart'
+  requestBodies:
+    UpdateCart:
+      type: array
+      description:  array de productos con id y quantity
+      items:
+        $ref: '#components/schemas/ItemCart'
+
+
+

@@ -71,6 +71,7 @@ const getCartById = async (req, res) => {
     const result = await cartService.getCartBy({ _id: cid });
     res.send({ status: "succes", payload: result });
   } catch (err) {
+    console.log(err)
     res.status(404).send({ status: "error", error: "Cart Not Found" });
   }
 };
@@ -154,7 +155,7 @@ const deleteProduct = async (req, res) => {
 };
 
 const cartUpdateWithBody = async (req, res) => {
-  // esta funcion busca un carrito son cid y luego mediante un objeto recibido por el body
+  // esta funcion busca un carrito con cid y luego mediante un objeto recibido por el body
   // actualiza los productos del carrito
   try {
     const { cid } = req.params;

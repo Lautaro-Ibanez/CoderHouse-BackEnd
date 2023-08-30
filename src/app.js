@@ -4,6 +4,8 @@ import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
 import cluster from "cluster";
 import os from "os";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 import viewsRouter from "./routes/views-router.js";
 import ProductRouter from "./routes/products-router.js";
@@ -43,6 +45,23 @@ if (cluster.isPrimary) {
     console.log(`Listening on port ${config.port}`)
   );
   const io = new Server(server);
+
+  // swagger //
+
+  const swaggerOptions = {
+    definition: {
+      openapi: "3.0.1",
+      info: {
+        title: "documentacion BackEndCoder",
+        description: "documentacion para API principal de BackEndCoder",
+      },
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`],
+  };
+
+  const specs = swaggerJSDoc(swaggerOptions);
+
+  app.use("/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
   /*--------------------------  middlewares  --------------------------*/
   app.use(express.json());
@@ -90,7 +109,7 @@ if (cluster.isPrimary) {
   app.use("/api/carts", cartRouter.getRouter());
   app.use("/api/sessions", sessionRouter.getRouter());
   app.use("/api/send", mailRouter);
-  app.use("/api/users", usersRouter.getRouter())
+  app.use("/api/users", usersRouter.getRouter());
   app.use("/", mockRouter);
 
   /*--------------------------  WebSockets  --------------------------*/
