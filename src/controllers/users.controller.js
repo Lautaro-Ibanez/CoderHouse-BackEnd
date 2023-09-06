@@ -11,7 +11,7 @@ const createUserPremiun = async (req, res) => {
     // escogiendo y asignando las opciones de role
     switch (user.role) {
       case "user":
-        await userService.updateUser(uid, { role: "premiun" });
+        await userService.updateUser(uid, { role: "premium" });
         res.sendSuccess("user successfully upgraded to premium");
         break;
 

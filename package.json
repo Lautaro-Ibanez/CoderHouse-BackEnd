@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha tests/session.test.js"
   },
   "repository": {
     "type": "git",
@@ -46,5 +46,10 @@
     "sweetalert": "^2.1.2",
     "twilio": "^4.14.0",
     "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.8",
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3"
   }
 }

@@ -9,7 +9,7 @@ export default class SessionRouter extends BaseRouter {
 
     this.post("/login",["NO_AUTH"],passportCall("login", { strategyType: "locals" }),sessionController.login);
 
-    this.get("/current", ["USER", "ADMIN"], sessionController.getCurrentUser);
+    this.get("/current", ["USER", "PREMIUM", "ADMIN"], sessionController.getCurrentUser);
 
     this.get("/logout", ["USER", "ADMIN"], sessionController.logout);
 
