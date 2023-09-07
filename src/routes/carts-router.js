@@ -6,23 +6,23 @@ export default class CartRouter extends BaseRouter {
   
         this.get("/",['ADMIN'], cartsController.getCarts);
 
-        this.post("/",['ADMIN','USER'], cartsController.addCart);
+        this.post("/",['ADMIN','USER','PREMIUM'], cartsController.addCart);
         
-        this.get("/:cid",['ADMIN','USER'], cartsController.getCartById);
+        this.get("/:cid",['ADMIN','USER','PREMIUM'], cartsController.getCartById);
         
-        this.get("/:cid/cantItems",['ADMIN','USER'], cartsController.getQuantityItems);
+        this.get("/:cid/cantItems",['ADMIN','USER','PREMIUM'], cartsController.getQuantityItems);
         
-        this.post("/:cid/product/:pid",['ADMIN','USER'], cartsController.addProductToCart);
+        this.post("/:cid/product/:pid",['ADMIN','USER','PREMIUM'], cartsController.addProductToCart);
         
-        this.delete("/:cid/product/:pid",['ADMIN','USER'], cartsController.deleteProduct);
+        this.delete("/:cid/product/:pid",['ADMIN','USER','PREMIUM'], cartsController.deleteProduct);
         
-        this.put("/:cid",['ADMIN','USER'], cartsController.cartUpdateWithBody);
+        this.put("/:cid",['ADMIN','USER','PREMIUM'], cartsController.cartUpdateWithBody);
         
-        this.put("/:cid/product/:pid",['ADMIN','USER'], cartsController.productInCartUpdate);
+        this.put("/:cid/product/:pid",['ADMIN','USER','PREMIUM'], cartsController.productInCartUpdate);
         
-        this.delete("/:cid",['ADMIN','USER'], cartsController.deleteCart);
+        this.delete("/:cid",['ADMIN','USER','PREMIUM'], cartsController.deleteCart);
         
-        this.get("/:cid/purchase",['ADMIN','USER'], cartsController.purchase)
+        this.get("/:cid/purchase",['ADMIN','USER','PREMIUM'], cartsController.purchase)
       
     }
   

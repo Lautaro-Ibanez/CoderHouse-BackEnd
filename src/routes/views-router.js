@@ -16,7 +16,7 @@ export default class ViewsRouter extends BaseRouter {
 
     this.get(
       "/carts/:cid",
-      [""],
+      ["ADMIN", "USER", "PREMIUM"],
       passportCall("jwt", { strategyType: "jwt" }),
       viewsController.renderCartById
     );

@@ -132,7 +132,7 @@ const updateProduct = async (req, res) => {
     if (!product)
       return res.send({ status: "error", message: "product not found" });
 
-    if (product.owner === owner || owner === "admin") {
+    if (product.owner === owner || req.user.role === "admin") {
       const updateProduct = req.body;
       const result = await productService.updateProduct(pid, updateProduct);
       res.status(201).send({ status: "success", message: "Product Updated" });

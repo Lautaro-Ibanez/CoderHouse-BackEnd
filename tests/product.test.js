@@ -4,13 +4,13 @@ import supertest from "supertest";
 const expect = chai.expect;
 const requester = supertest("http://localhost:8080");
 
-describe("Testing de router de products", async function () {
+export const testProduct = describe("Testing de router de products", async function () {
   let cookie;
   this.timeout(8000);
   before(async function () {
     const mockLogin = {
-      email: "mombusssss@gmail.com",
-      password: "123456",
+      email: "adminCoder@coder.com",
+      password: "adminCod3r123",
     };
     const response = await requester
       .post(`/api/sessions/login`)

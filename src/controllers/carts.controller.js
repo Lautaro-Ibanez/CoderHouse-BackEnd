@@ -83,7 +83,7 @@ const getQuantityItems = async (req, res) => {
     const { cid } = req.params;
     const cart = await cartService.getCartBy({ _id: cid });
     const quantityCartItems = productsInCart(cart);
-    res.status(200).send(quantityCartItems.toString());
+    res.status(200).send({status:"success", payload:quantityCartItems});
   } catch (error) {
     res.status(400).send({ error: error });
   }

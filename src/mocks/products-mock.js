@@ -12,3 +12,11 @@ export const generateProduct = () => {
     status: true,
   };
 };
+
+export const generateUser = () => {
+  return {
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
+    password: faker.internet.password({ length: 5 }),
+  };
+};

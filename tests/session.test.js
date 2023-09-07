@@ -1,20 +1,16 @@
 import chai from "chai";
 import supertest from "supertest";
-import { validatePassword } from "../src/services/auth.js";
+import { generateUser } from "../src/mocks/products-mock.js";
 
 const expect = chai.expect;
 const requester = supertest("http://localhost:8080");
 
-describe("Testing de router de sessions", async function () {
+export const testSession = describe("Testing de router de sessions", async function () {
   let cookie;
   this.timeout(8000);
 
   it("Endpoint POST /api/sessions/register debera crear un usuario", async function () {
-    const mockUser = {
-      name: "lautaro",
-      email: "lautaroCoder9@correo.com",
-      password: "123",
-    };
+    const mockUser = generateUser()
     const response = await requester
       .post("/api/sessions/register")
       .send(mockUser);
@@ -23,8 +19,8 @@ describe("Testing de router de sessions", async function () {
 
   it("Endpoint POST /api/sessions/login debera crear una cookie", async function () {
     const mockLogin = {
-      email: "mombusssss@gmail.com",
-      password: "123456",
+      email: "adminCoder@coder.com",
+      password: "adminCod3r123",
     };
     const response = await requester
       .post(`/api/sessions/login`)
